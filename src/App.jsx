@@ -78,8 +78,8 @@ function App() {
 
       {/* Main Content */}
       <main className="main-content">
-        {/* Mode-based Hero Section */}
-        {mode === 'spotify' && track ? (
+        {/* Now Playing Hero Section */}
+        {track ? (
           <div className="now-playing-hero" style={{'--bg-color': bgColor}}>
             <img 
               src={track.item.album.images[0]?.url} 
