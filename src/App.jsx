@@ -1,65 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import { authorizeUrl, exchangeCodeForToken, refreshToken, getCurrentlyPlaying, proxyImage } from './spotify'
+import { getNowPlaying } from './spotify'
 
 function App() {
-  const [token, setToken] = useState(() => localStorage.getItem('spotify_access_token'))
-  const [refresh, setRefresh] = useState(() => localStorage.getItem('spotify_refresh_token'))
+  // This site displays only the owner's listening. Tokens are stored server-side.
   const [track, setTrack] = useState(null)
   const [bg, setBg] = useState('#111')
-
   useEffect(() => {
-    // handle OAuth redirect with ?code=
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get('code')
-    if (code && !token) {
-      // exchange on backend
-      exchangeCodeForToken(code, window.location.origin).then(saved => {
-        setToken(saved.access_token)
-        setRefresh(saved.refresh_token)
-        localStorage.setItem('spotify_access_token', saved.access_token)
-        if (saved.refresh_token) localStorage.setItem('spotify_refresh_token', saved.refresh_token)
-        window.history.replaceState({}, document.title, window.location.pathname)
-      }).catch(err => console.error(err))
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!token) return
     let mounted = true
     const load = async () => {
       try {
-        const playing = await getCurrentlyPlaying(token)
+        const playing = await getNowPlaying()
         if (!mounted) return
         if (playing && playing.item) {
           setTrack(playing)
-          const img = playing.item.album.images[0]?.url
-          if (img) {
-            const base64 = await proxyImage(img)
+          const base64 = playing.album_base64
+          if (base64) {
             const color = await getAverageColorFromBase64(base64)
             setBg(color)
           }
+        } else {
+          setTrack(null)
         }
       } catch (e) {
         console.error(e)
-        // try refresh
-        if (refresh) {
-          const refreshed = await refreshToken(refresh)
-          if (refreshed?.access_token) {
-            setToken(refreshed.access_token)
-            localStorage.setItem('spotify_access_token', refreshed.access_token)
-          }
-        }
       }
     }
     load()
     const iv = setInterval(load, 15000)
     return () => { mounted = false; clearInterval(iv) }
-  }, [token, refresh])
-
-  function connect() {
-    const url = authorizeUrl(window.location.origin)
-    window.location.href = url
-  }
+  }, [])
 
   return (
     <div className="app" style={{background: `linear-gradient(120deg, ${bg} 0%, #000 85%)`}}>
@@ -69,13 +38,9 @@ function App() {
       </header>
 
       <main>
-        {!token ? (
-          <div className="center">
-            <button className="btn" onClick={connect}>Connect with Spotify</button>
-          </div>
-        ) : track ? (
+        {track ? (
           <div className="track">
-            <img src={track.item.album.images[0]?.url} alt="cover" crossOrigin="anonymous" />
+            <img src={track.item.album.images[0]?.url || track.album_local_url} alt="cover" crossOrigin="anonymous" />
             <div className="meta">
               <h2>{track.item.name}</h2>
               <h3>{track.item.artists.map(a=>a.name).join(', ')}</h3>
@@ -83,7 +48,7 @@ function App() {
             </div>
           </div>
         ) : (
-          <div className="center"><p>Nothing playing right now</p></div>
+          <div className="center"><p>Not playing right now</p></div>
         )}
       </main>
 
