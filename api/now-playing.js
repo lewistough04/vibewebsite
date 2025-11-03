@@ -25,21 +25,33 @@ module.exports = async (req, res) => {
 
     if (nowRes.status === 204) {
       // nothing currently playing; fall back to recently-played
+      console.log('No current playback, fetching recently-played...')
       const recentRes = await fetch('https://api.spotify.com/v1/me/player/recently-played?limit=1', { headers: { Authorization: `Bearer ${access_token}` } })
       if (recentRes.ok) {
         const recentData = await recentRes.json()
+        console.log('Recently-played response:', JSON.stringify(recentData, null, 2))
         const item = recentData.items && recentData.items[0] && recentData.items[0].track ? recentData.items[0].track : null
         if (item) {
           nowData = { item, is_playing: false, played_at: recentData.items[0].played_at }
+          console.log('Set nowData from recently-played:', nowData.item.name)
+        } else {
+          console.log('No items in recently-played response')
         }
+      } else {
+        console.log('Recently-played request failed:', recentRes.status)
       }
     } else if (!nowRes.ok) {
+      console.log('Currently-playing error:', nowRes.status)
       return res.status(nowRes.status).json({ error: 'spotify_error' })
     } else {
       nowData = await nowRes.json()
+      console.log('Currently playing:', nowData.item?.name)
     }
 
-    if (!nowData || !nowData.item) return res.status(204).end()
+    if (!nowData || !nowData.item) {
+      console.log('No track data to return')
+      return res.status(204).end()
+    }
 
     // fetch album image and return base64 so frontend can access pixels
     let album_base64 = null

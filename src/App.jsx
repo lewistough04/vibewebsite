@@ -12,6 +12,7 @@ function App() {
       try {
         const playing = await getNowPlaying()
         if (!mounted) return
+        console.log('Received track data:', playing)
         if (playing && playing.item) {
           setTrack(playing)
           const base64 = playing.album_base64
@@ -20,10 +21,11 @@ function App() {
             setBgColor(color)
           }
         } else {
+          console.log('No track data received')
           setTrack(null)
         }
       } catch (e) {
-        console.error(e)
+        console.error('Error loading track:', e)
       }
     }
     load()
