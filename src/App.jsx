@@ -242,7 +242,7 @@ function ProjectsSection() {
       link: 'dyhtg.com'
     },
     {
-      title: '🧠 Good for Code - JPMorgan Chase',
+      title: '🧠 Code for Good - JPMorgan Chase',
       description: 'Developed a prototype webapp that generates catered playlists for dementia patients with minimal input about their music taste. Focused on accessibility and user experience.',
       tech: 'Spotify API, React, Machine Learning',
       link: null
