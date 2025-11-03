@@ -57,6 +57,37 @@ app.post('/proxy-image', async (req, res) => {
 // Local now-playing route: uses SPOTIFY_REFRESH_TOKEN from .env to fetch the owner's
 // currently playing track. Set SPOTIFY_REFRESH_TOKEN in your local .env after running
 // the one-time auth flow to produce a refresh token.
+app.get('/letterboxd', async (req, res) => {
+  try {
+    const username = 'lewistough7'
+    const rssUrl = `https://letterboxd.com/${username}/rss/`
+    
+    const response = await fetch(rssUrl)
+    const xmlText = await response.text()
+    
+    const items = xmlText.match(/<item>[\s\S]*?<\/item>/g) || []
+    const movies = items.slice(0, 12).map(item => {
+      const titleMatch = item.match(/<letterboxd:filmTitle>(.*?)<\/letterboxd:filmTitle>/)
+      const yearMatch = item.match(/<letterboxd:filmYear>(.*?)<\/letterboxd:filmYear>/)
+      const posterMatch = item.match(/<description>.*?<img src="(.*?)".*?<\/description>/)
+      const ratingMatch = item.match(/<letterboxd:memberRating>(.*?)<\/letterboxd:memberRating>/)
+      const watchedDateMatch = item.match(/<letterboxd:watchedDate>(.*?)<\/letterboxd:watchedDate>/)
+      const linkMatch = item.match(/<link>(.*?)<\/link>/)
+      
+      return {
+        title: titleMatch ? titleMatch[1] : 'Unknown',
+        year: yearMatch ? yearMatch[1] : '',
+        poster: posterMatch ? posterMatch[1].replace('-0-150-0-225-crop', '-0-460-0-690-crop') : null,
+        rating: ratingMatch ? parseFloat(ratingMatch[1]) : null,
+        watchedDate: watchedDateMatch ? watchedDateMatch[1] : null,
+        link: linkMatch ? linkMatch[1] : null
+      }
+    })
+    
+    res.json({ movies })
+  } catch (err) { console.error(err); res.status(500).json({ error: 'server_error' }) }
+})
+
 app.get('/now-playing', async (req, res) => {
   try {
     const refresh_token = process.env.SPOTIFY_REFRESH_TOKEN
