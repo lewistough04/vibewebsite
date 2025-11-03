@@ -1,0 +1,13 @@
+:root{--fg:#fff}
+*{box-sizing:border-box}
+html,body,#root{height:100%;margin:0;font-family:Inter,system-ui,Arial;color:var(--fg)}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.top{padding:24px}
+.top h1{margin:0}
+.center{display:flex;align-items:center;justify-content:center;height:60vh}
+.btn{background:#1db954;border:none;color:#fff;padding:12px 20px;border-radius:8px;font-weight:600;cursor:pointer}
+.track{display:flex;gap:20px;align-items:center;padding:24px}
+.track img{width:160px;height:160px;object-fit:cover;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.meta h2{margin:0 0 8px 0}
+.meta h3{margin:0;color:rgba(255,255,255,.85);font-weight:500}
+.foot{margin-top:auto;padding:12px;text-align:center;font-size:13px;color:rgba(255,255,255,.7)}
