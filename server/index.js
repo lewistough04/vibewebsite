@@ -112,7 +112,7 @@ app.get('/now-playing', async (req, res) => {
 
 // One-time auth helper: visit this to get your refresh token
 app.get('/auth', (req, res) => {
-  const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.SPOTIFY_CLIENT_ID}&scope=user-read-currently-playing%20user-read-playback-state&redirect_uri=http://localhost:${process.env.PORT || 3000}/callback`
+  const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.SPOTIFY_CLIENT_ID}&scope=user-read-currently-playing%20user-read-playback-state&redirect_uri=http://127.0.0.1:${process.env.PORT || 3000}/callback`
   res.send(`<h1>Get Refresh Token</h1><p><a href="${authUrl}">Click here to authorize with Spotify</a></p>`)
 })
 
@@ -124,7 +124,7 @@ app.get('/callback', async (req, res) => {
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: `http://localhost:${process.env.PORT || 3000}/callback`,
+      redirect_uri: `http://127.0.0.1:${process.env.PORT || 3000}/callback`,
       client_id: process.env.SPOTIFY_CLIENT_ID,
       client_secret: process.env.SPOTIFY_CLIENT_SECRET
     })
