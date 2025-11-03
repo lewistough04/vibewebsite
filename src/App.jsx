@@ -38,7 +38,11 @@ function App() {
       {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="logo">
-          <div className="logo-icon">🎵</div>
+          <div className="logo-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
           <span>Lewis Tough</span>
         </div>
         
@@ -48,31 +52,46 @@ function App() {
               className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}
               onClick={() => setActiveSection('home')}
             >
-              🏠 Home
+              <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              </svg>
+              <span>Home</span>
             </li>
             <li 
               className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}
               onClick={() => setActiveSection('about')}
             >
-              👤 About
+              <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+              <span>About</span>
             </li>
             <li 
               className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`}
               onClick={() => setActiveSection('projects')}
             >
-              💼 Projects
+              <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 12 7.4l3.38 4.6L17 10.83 14.92 8H20v6z"/>
+              </svg>
+              <span>Projects</span>
             </li>
             <li 
               className={`nav-link ${activeSection === 'skills' ? 'active' : ''}`}
               onClick={() => setActiveSection('skills')}
             >
-              ⚡ Skills
+              <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+              </svg>
+              <span>Skills</span>
             </li>
             <li 
               className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}
               onClick={() => setActiveSection('contact')}
             >
-              📧 Contact
+              <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+              <span>Contact</span>
             </li>
           </ul>
         </nav>
@@ -91,7 +110,10 @@ function App() {
             />
             <div className="track-info">
               <div className="track-label">
-                {track.is_playing ? 'Now Playing' : `${getTimeAgo(track.played_at)}`}
+                <div className="status-indicator">
+                  {track.is_playing && <span className="pulse"></span>}
+                  {track.is_playing ? 'NOW PLAYING' : `LAST PLAYED • ${getTimeAgo(track.played_at).toUpperCase()}`}
+                </div>
               </div>
               <h1 className="track-title">{track.item.name}</h1>
               <p className="track-artist">
@@ -117,8 +139,11 @@ function App() {
           </div>
         ) : (
           <div className="empty-state">
-            <h2>🎧 Nothing playing right now</h2>
-            <p>Check back soon to see what I'm listening to!</p>
+            <svg className="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+            <h2>Nothing playing right now</h2>
+            <p>Check back soon to see what I'm listening to</p>
           </div>
         )}
 
@@ -151,7 +176,7 @@ function HomeSection() {
             and you can listen along too! The background colors adapt to match the album artwork.
           </p>
           <p style={{marginTop: '12px', fontSize: '14px', color: '#b3b3b3'}}>
-            Built for fun with music in mind and a bit of vibecoding
+            I Built this website for fun with music in mind and to try out some vibecoding
           </p>
         </div>
         <div className="card">
