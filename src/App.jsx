@@ -5,12 +5,8 @@ function App() {
   const [track, setTrack] = useState(null)
   const [bgColor, setBgColor] = useState('#1a1a1a')
   const [activeSection, setActiveSection] = useState('home')
-  const [mode, setMode] = useState('spotify') // 'spotify' or 'letterboxd'
-  const [movies, setMovies] = useState([])
 
-  // Fetch Spotify data
   useEffect(() => {
-    if (mode !== 'spotify') return
     let mounted = true
     const load = async () => {
       try {
@@ -33,63 +29,15 @@ function App() {
     load()
     const iv = setInterval(load, 15000)
     return () => { mounted = false; clearInterval(iv) }
-  }, [mode])
-
-  // Fetch Letterboxd data
-  useEffect(() => {
-    if (mode !== 'letterboxd') return
-    let mounted = true
-    const load = async () => {
-      try {
-        const res = await fetch('/api/letterboxd')
-        if (!mounted) return
-        const data = await res.json()
-        if (data.movies) {
-          setMovies(data.movies)
-          // Set background to movie poster colors
-          if (data.movies[0]?.poster) {
-            setBgColor('#2c3440') // Letterboxd-ish blue-grey
-          }
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    load()
-    const iv = setInterval(load, 60000) // Update every minute
-    return () => { mounted = false; clearInterval(iv) }
-  }, [mode])
+  }, [])
 
   return (
     <div className="app">
       {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="logo">
-          <div className="logo-icon">{mode === 'spotify' ? '🎵' : '🎬'}</div>
+          <div className="logo-icon">🎵</div>
           <span>Lewis Tough</span>
-        </div>
-        
-        {/* Mode Toggle */}
-        <div style={{padding: '0 12px', marginBottom: '16px'}}>
-          <button 
-            onClick={() => setMode(mode === 'spotify' ? 'letterboxd' : 'spotify')}
-            style={{
-              width: '100%',
-              padding: '8px 12px',
-              background: 'var(--spotify-light-gray)',
-              border: 'none',
-              borderRadius: '4px',
-              color: 'var(--text-white)',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '600',
-              transition: 'background 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.background = 'var(--spotify-green)'}
-            onMouseLeave={(e) => e.target.style.background = 'var(--spotify-light-gray)'}
-          >
-            {mode === 'spotify' ? '🎬 Switch to Movies' : '🎵 Switch to Music'}
-          </button>
         </div>
         
         <nav>
@@ -165,44 +113,10 @@ function App() {
               </div>
             </div>
           </div>
-        ) : mode === 'spotify' ? (
+        ) : (
           <div className="empty-state">
             <h2>🎧 Nothing playing right now</h2>
             <p>Check back soon to see what I'm listening to!</p>
-          </div>
-        ) : null}
-
-        {/* Letterboxd Movies Grid */}
-        {mode === 'letterboxd' && (
-          <div className="letterboxd-section">
-            <h2 className="section-header" style={{marginBottom: '24px'}}>
-              🎬 Recently Watched Films
-            </h2>
-            {movies.length > 0 ? (
-              <div className="movies-grid">
-                {movies.map((movie, i) => (
-                  <div key={i} className="movie-card" onClick={() => movie.link && window.open(movie.link, '_blank')}>
-                    {movie.poster && (
-                      <img src={movie.poster} alt={movie.title} className="movie-poster" />
-                    )}
-                    <div className="movie-info">
-                      <h3 className="movie-title">{movie.title}</h3>
-                      <p className="movie-year">{movie.year}</p>
-                      {movie.rating && (
-                        <div className="movie-rating">
-                          {'★'.repeat(movie.rating)}{'☆'.repeat(5 - movie.rating)}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <h2>🎬 No recent films</h2>
-                <p>Loading Letterboxd data...</p>
-              </div>
-            )}
           </div>
         )}
 
