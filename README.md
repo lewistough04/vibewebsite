@@ -44,10 +44,12 @@ The React app will be served at `http://localhost:5173/`. The frontend calls `/n
 You need a refresh token for the specific Spotify account whose listening you want to show. The easiest one-time way to obtain it locally is:
 
 1. Start the local server (`npm start`).
-2. Build this authorization URL (replace CLIENT_ID and REDIRECT_URI):
+2. Visit `http://localhost:3000/auth` in your browser - this will show you a link to authorize with Spotify
+   
+   OR build this authorization URL manually (replace CLIENT_ID):
 
 ```
-https://accounts.spotify.com/authorize?response_type=code&client_id=CLIENT_ID&scope=user-read-currently-playing%20user-read-playback-state&redirect_uri=http://localhost:3000/callback
+https://accounts.spotify.com/authorize?response_type=code&client_id=CLIENT_ID&scope=user-read-currently-playing%20user-read-playback-state%20user-read-recently-played&redirect_uri=http://localhost:3000/callback
 ```
 
 3. Visit that URL in your browser, sign in with the Spotify account you want to show. Spotify will redirect to `http://localhost:3000/callback?code=...`.
