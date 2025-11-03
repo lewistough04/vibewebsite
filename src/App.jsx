@@ -96,6 +96,21 @@ function App() {
                 {track.item.artists.map(a => a.name).join(', ')}
               </p>
               <p className="track-album">{track.item.album.name}</p>
+              
+              {/* Spotify Embed Player */}
+              <div className="player-embed" style={{marginTop: '24px'}}>
+                <iframe 
+                  style={{borderRadius: '12px'}}
+                  src={`https://open.spotify.com/embed/track/${track.item.id}?utm_source=generator&theme=0`}
+                  width="100%" 
+                  height="152" 
+                  frameBorder="0" 
+                  allowFullScreen="" 
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                  loading="lazy"
+                  title="Spotify Player"
+                ></iframe>
+              </div>
             </div>
           </div>
         ) : (

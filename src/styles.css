@@ -100,7 +100,7 @@ html, body, #root {
   background: linear-gradient(180deg, var(--bg-color) 0%, var(--spotify-dark) 50%);
   border-radius: 8px;
   margin-bottom: 32px;
-  min-height: 340px;
+  min-height: 400px;
   align-items: flex-end;
 }
 
@@ -142,6 +142,16 @@ html, body, #root {
 .track-album {
   font-size: 14px;
   color: var(--text-gray);
+}
+
+.player-embed {
+  max-width: 500px;
+  margin-top: 24px;
+}
+
+.player-embed iframe {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
 }
 
 /* Portfolio Sections */
