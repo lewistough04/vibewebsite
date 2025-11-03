@@ -110,5 +110,41 @@ app.get('/now-playing', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'server_error' }) }
 })
 
+// One-time auth helper: visit this to get your refresh token
+app.get('/auth', (req, res) => {
+  const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.SPOTIFY_CLIENT_ID}&scope=user-read-currently-playing%20user-read-playback-state&redirect_uri=http://localhost:${process.env.PORT || 3000}/callback`
+  res.send(`<h1>Get Refresh Token</h1><p><a href="${authUrl}">Click here to authorize with Spotify</a></p>`)
+})
+
+app.get('/callback', async (req, res) => {
+  const code = req.query.code
+  if (!code) return res.send('<h1>Error: No code received</h1>')
+  
+  try {
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: `http://localhost:${process.env.PORT || 3000}/callback`,
+      client_id: process.env.SPOTIFY_CLIENT_ID,
+      client_secret: process.env.SPOTIFY_CLIENT_SECRET
+    })
+    const r = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', body: params })
+    const data = await r.json()
+    
+    if (data.refresh_token) {
+      res.send(`
+        <h1>Success!</h1>
+        <p>Copy this refresh token and add it to your Vercel environment variables as <code>SPOTIFY_REFRESH_TOKEN</code>:</p>
+        <textarea style="width:100%;height:100px;font-family:monospace">${data.refresh_token}</textarea>
+        <p>Also add it to your local .env file.</p>
+      `)
+    } else {
+      res.send(`<h1>Error</h1><pre>${JSON.stringify(data, null, 2)}</pre>`)
+    }
+  } catch (err) {
+    res.send(`<h1>Error</h1><pre>${err.message}</pre>`)
+  }
+})
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, ()=> console.log('local server listening on', PORT))
