@@ -91,7 +91,7 @@ function App() {
             />
             <div className="track-info">
               <div className="track-label">
-                {track.is_playing ? '🎵 Now Playing' : `🕐 Last Played ${getTimeAgo(track.played_at)}`}
+                {track.is_playing ? 'Now Playing' : `${getTimeAgo(track.played_at)}`}
               </div>
               <h1 className="track-title">{track.item.name}</h1>
               <p className="track-artist">
@@ -140,7 +140,7 @@ function HomeSection() {
       <h2 className="section-header">Welcome to My Portfolio</h2>
       <div className="section-content">
         <div className="card">
-          <h3>👋 Hi, I'm Lewis Tough</h3>
+          <h3>Hi, I'm Lewis Tough</h3>
           <p>
             I'm a software developer passionate about building innovative web applications and solving complex problems. 
             With experience in full-stack development, hackathons, and competitive programming, I create solutions that blend 
@@ -151,17 +151,17 @@ function HomeSection() {
             and you can listen along too! The background colors adapt to match the album artwork.
           </p>
           <p style={{marginTop: '12px', fontSize: '14px', color: '#b3b3b3'}}>
-            Built for fun with music in mind and a bit of vibecoding 🎵
+            Built for fun with music in mind and a bit of vibecoding
           </p>
         </div>
         <div className="card">
-          <h3>🚀 Quick Highlights</h3>
+          <h3>Quick Highlights</h3>
           <p>
-            ✨ 8+ projects spanning web development, game development, and systems programming<br/>
-            🏆 Multiple hackathon participations with recognition<br/>
-            💻 Proficient in React, Django, Python, and modern web technologies<br/>
-            🤝 Strong collaboration and communication skills from team-based projects<br/>
-            📚 Active member of Glasgow University Tech Society
+            8+ projects spanning web development, game development, and systems programming<br/>
+            Multiple hackathon participations with recognition<br/>
+            Proficient in React, Django, Python, and modern web technologies<br/>
+            Strong collaboration and communication skills from team-based projects<br/>
+            Active committee member of Glasgow University Tech Society
           </p>
         </div>
       </div>
@@ -175,14 +175,14 @@ function AboutSection() {
       <h2 className="section-header">About Me</h2>
       <div className="section-content">
         <div className="card">
-          <h3>🎯 What I Do</h3>
+          <h3>What I Do</h3>
           <p>
             I'm a software developer with a passion for building full-stack web applications and solving complex problems.
             I specialize in creating interactive, user-friendly solutions using modern technologies like React, Django, and various APIs.
           </p>
         </div>
         <div className="card">
-          <h3>🏆 Hackathon Experience</h3>
+          <h3>Hackathon Experience</h3>
           <p>
             I've competed in multiple hackathons including GUTS (Glasgow University Tech Society) events, 
             where I've developed fully functional webapps in 24-hour sprints and received recognition for innovation.
@@ -190,7 +190,7 @@ function AboutSection() {
           </p>
         </div>
         <div className="card">
-          <h3>💡 My Approach</h3>
+          <h3>My Approach</h3>
           <p>
             I believe in practical problem-solving and clean code. Whether it's algorithms and data structures 
             challenges or building complete web applications, I focus on creating solutions that work efficiently 

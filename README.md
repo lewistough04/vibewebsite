@@ -1,8 +1,9 @@
 # Vibe — Spotify-synced portfolio
 
-This project is a minimal Vite + React portfolio that shows what *one* Spotify account is currently listening to and adapts the site colour to match the album artwork.
+This project is a minimal Vite + React portfolio that shows what _one_ Spotify account is currently listening to and adapts the site colour to match the album artwork.
 
 Overview
+
 - The frontend is a static React app that fetches data from a serverless API endpoint `/api/now-playing`.
 - The serverless endpoint holds the Spotify credentials (client id + secret) and a refresh token for a single Spotify account. It refreshes access tokens server-side and queries the Spotify API. This way the client never contains a client secret or needs to perform OAuth, and you can keep the client id/secret private.
 
@@ -45,7 +46,7 @@ You need a refresh token for the specific Spotify account whose listening you wa
 
 1. Start the local server (`npm start`).
 2. Visit `http://localhost:3000/auth` in your browser - this will show you a link to authorize with Spotify
-   
+
    OR build this authorization URL manually (replace CLIENT_ID):
 
 ```
@@ -88,6 +89,7 @@ With this configuration the frontend never performs OAuth and no client-side sec
 This project is a minimal Vite + React portfolio that connects to Spotify, reads your currently playing track, fetches the album cover, extracts an average colour and updates the site's colour to match.
 
 Features
+
 - Client-side React app that starts Spotify OAuth
 - Serverless API endpoints (for Vercel) to securely exchange tokens and proxy images
 - Local Express server for development
