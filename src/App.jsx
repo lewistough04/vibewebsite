@@ -140,8 +140,23 @@ function HomeSection() {
         <div className="card">
           <h3>👋 Hi, I'm Lewis Tough</h3>
           <p>
-            A passionate developer who loves building cool things. 
-            This portfolio syncs with my Spotify to show what I'm currently listening to!
+            I'm a software developer passionate about building innovative web applications and solving complex problems. 
+            With experience in full-stack development, hackathons, and competitive programming, I create solutions that blend 
+            technical excellence with user-friendly design.
+          </p>
+          <p style={{marginTop: '12px'}}>
+            This portfolio syncs with my Spotify in real-time to show what I'm currently listening to - 
+            and you can listen along too! The background colors adapt to match the album artwork.
+          </p>
+        </div>
+        <div className="card">
+          <h3>🚀 Quick Highlights</h3>
+          <p>
+            ✨ 8+ projects spanning web development, game development, and systems programming<br/>
+            🏆 Multiple hackathon participations with recognition<br/>
+            💻 Proficient in React, Django, Python, and modern web technologies<br/>
+            🤝 Strong collaboration and communication skills from team-based projects<br/>
+            📚 Active member of Glasgow University Tech Society
           </p>
         </div>
       </div>
@@ -157,15 +172,24 @@ function AboutSection() {
         <div className="card">
           <h3>🎯 What I Do</h3>
           <p>
-            I'm a developer focused on creating modern, user-friendly applications.
-            I enjoy working with the latest technologies and building projects that solve real problems.
+            I'm a software developer with a passion for building full-stack web applications and solving complex problems.
+            I specialize in creating interactive, user-friendly solutions using modern technologies like React, Django, and various APIs.
           </p>
         </div>
         <div className="card">
-          <h3>🎨 My Approach</h3>
+          <h3>🏆 Hackathon Experience</h3>
           <p>
-            I believe in clean code, great design, and user experience. 
-            Every project is an opportunity to learn something new and push boundaries.
+            I've competed in multiple hackathons including GUTS (Glasgow University Tech Society) events, 
+            where I've developed fully functional webapps in 24-hour sprints and received recognition for innovation.
+            I thrive in fast-paced, collaborative environments.
+          </p>
+        </div>
+        <div className="card">
+          <h3>💡 My Approach</h3>
+          <p>
+            I believe in practical problem-solving and clean code. Whether it's algorithms and data structures 
+            challenges or building complete web applications, I focus on creating solutions that work efficiently 
+            and provide real value to users.
           </p>
         </div>
       </div>
@@ -177,27 +201,70 @@ function ProjectsSection() {
   const projects = [
     {
       title: '🎵 Spotify Portfolio',
-      description: 'A dynamic portfolio that syncs with Spotify to display currently playing music and adapts colors to album artwork.',
-      tech: 'React, Vite, Spotify API, Vercel'
+      description: 'A dynamic portfolio that syncs with Spotify to display currently playing music and adapts colors to album artwork. Features an embedded player for visitors to listen along.',
+      tech: 'React, Vite, Spotify API, Node.js, Vercel',
+      link: 'vibewebsitevercel.vercel.app'
     },
     {
-      title: '🚀 Your Project Here',
-      description: 'Add your own projects by editing the App.jsx file. Each project can showcase your skills and achievements.',
-      tech: 'Your tech stack'
+      title: '🎸 Do You Have the GUTS Hackathon 2024',
+      description: 'Worked in a team to deploy a fully functional webapp in 24 hours using the GuitarGuitar API. Built a comprehensive music gear browsing and recommendation system.',
+      tech: 'Django, REST API, React',
+      link: 'dyhtg.com'
+    },
+    {
+      title: '🧠 Good for Code - JPMorgan Chase',
+      description: 'Developed a prototype webapp that generates catered playlists for dementia patients with minimal input about their music taste. Focused on accessibility and user experience.',
+      tech: 'Spotify API, React, Machine Learning',
+      link: null
+    },
+    {
+      title: '🌱 Gardening Company Website',
+      description: 'Currently developing a professional webapp for an Edinburgh-based gardening company. Features service showcase, booking system, and responsive design.',
+      tech: 'React, Node.js, PostgreSQL',
+      link: null
+    },
+    {
+      title: '🎮 Game Review Website',
+      description: 'Built a comprehensive game rating and review platform with multifaceted search system, user profiles, and password strength validation.',
+      tech: 'Django, Python, SQLite, JavaScript',
+      link: null
+    },
+    {
+      title: '🪐 Gravity Simulator',
+      description: 'Created an N-body gravity simulator featuring complex physics calculations and real-time visualization of celestial mechanics.',
+      tech: 'Python, NumPy, Pygame',
+      link: null
+    },
+    {
+      title: '📁 File Transfer System',
+      description: 'Implemented a robust file transfer system using TCP sockets with error handling and progress tracking.',
+      tech: 'Python, Socket Programming, TCP',
+      link: null
+    },
+    {
+      title: '🕹️ Platformer Game',
+      description: 'Developed a full-featured platformer with custom level editor, friendly UI, and SQL web server for high score storage.',
+      tech: 'Python, Pygame, SQL',
+      link: null
     }
   ]
 
   return (
     <div className="section">
-      <h2 className="section-header">Projects</h2>
+      <h2 className="section-header">Projects & Hackathons</h2>
       <div className="section-content">
         {projects.map((project, i) => (
           <div key={i} className="card">
             <h3>{project.title}</h3>
             <p>{project.description}</p>
-            <p style={{marginTop: '12px', fontSize: '12px', color: '#1db954'}}>
+            <p style={{marginTop: '12px', fontSize: '12px', color: '#1db954', fontWeight: '600'}}>
               {project.tech}
             </p>
+            {project.link && (
+              <p style={{marginTop: '8px', fontSize: '12px', color: '#b3b3b3'}}>
+                🔗 {project.link}
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -207,9 +274,11 @@ function ProjectsSection() {
 
 function SkillsSection() {
   const skills = [
-    'React', 'JavaScript', 'TypeScript', 'Node.js', 
-    'Python', 'HTML/CSS', 'Git', 'API Development',
-    'Vite', 'Vercel', 'Express', 'REST APIs'
+    'React', 'Django', 'Python', 'JavaScript', 
+    'Node.js', 'REST API', 'Spotify API', 'PostgreSQL',
+    'SQLite', 'TCP Sockets', 'Git', 'HTML/CSS',
+    'Pygame', 'NumPy', 'Vite', 'Vercel',
+    'Algorithms', 'Data Structures', 'Socket Programming', 'Machine Learning'
   ]
 
   return (
@@ -219,6 +288,20 @@ function SkillsSection() {
         {skills.map((skill, i) => (
           <div key={i} className="skill-tag">{skill}</div>
         ))}
+      </div>
+      
+      <div className="section" style={{marginTop: '48px'}}>
+        <h3 className="section-header" style={{fontSize: '20px'}}>🏆 Achievements</h3>
+        <div className="section-content">
+          <div className="card">
+            <h3>GUTS Code Olympics 2024</h3>
+            <p>Utilized algorithms and data structures to solve complex problems. Demonstrated excellent communication and teamwork skills in competitive programming environment.</p>
+          </div>
+          <div className="card">
+            <h3>Do You Have the GUTS Hackathon 2022</h3>
+            <p>Received an honourable mention for innovative project in competitive tech environment. Built strong collaboration and communication skills.</p>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -230,16 +313,22 @@ function ContactSection() {
       <h2 className="section-header">Get In Touch</h2>
       <div className="section-content">
         <div className="card">
-          <h3>📧 Email</h3>
-          <p>your.email@example.com</p>
+          <h3>� GitHub</h3>
+          <p style={{color: '#1db954', cursor: 'pointer'}} onClick={() => window.open('https://github.com/lewistough04', '_blank')}>
+            github.com/lewistough04
+          </p>
         </div>
         <div className="card">
           <h3>💼 LinkedIn</h3>
-          <p>linkedin.com/in/yourprofile</p>
+          <p>Connect with me on LinkedIn to discuss opportunities and collaborations.</p>
         </div>
         <div className="card">
-          <h3>🐙 GitHub</h3>
-          <p>github.com/lewistough04</p>
+          <h3>📧 Email</h3>
+          <p>Feel free to reach out for project inquiries or collaboration opportunities.</p>
+        </div>
+        <div className="card">
+          <h3>🏫 Education</h3>
+          <p>Glasgow University Tech Society Member - Active participant in hackathons and coding challenges.</p>
         </div>
       </div>
     </div>
