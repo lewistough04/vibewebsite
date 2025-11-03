@@ -338,26 +338,123 @@ function SkillsSection() {
 }
 
 function ContactSection() {
+  const [formData, setFormData] = React.useState({
+    name: '',
+    type: 'music',
+    recommendation: '',
+    message: ''
+  })
+  const [status, setStatus] = React.useState('')
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setStatus('')
+
+    try {
+      const response = await fetch('/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+
+      if (response.ok) {
+        setStatus('success')
+        setFormData({ name: '', type: 'music', recommendation: '', message: '' })
+      } else {
+        setStatus('error')
+      }
+    } catch (error) {
+      console.error('Error submitting recommendation:', error)
+      setStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="section">
       <h2 className="section-header">Get In Touch</h2>
       <div className="section-content">
+        <div className="card recommendation-form">
+          <h3>Recommend Music or Movies</h3>
+          <p style={{marginBottom: '16px', color: '#b3b3b3'}}>
+            Got a song or movie I should check out? Let me know!
+          </p>
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder="Your name (optional)"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <select
+                value={formData.type}
+                onChange={(e) => setFormData({...formData, type: e.target.value})}
+                className="form-select"
+              >
+                <option value="music">Music Recommendation</option>
+                <option value="movie">Movie Recommendation</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder={formData.type === 'music' ? 'Song name or artist' : 'Movie title'}
+                value={formData.recommendation}
+                onChange={(e) => setFormData({...formData, recommendation: e.target.value})}
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <textarea
+                placeholder="Why should I check it out? (optional)"
+                value={formData.message}
+                onChange={(e) => setFormData({...formData, message: e.target.value})}
+                className="form-textarea"
+                rows="3"
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              className="form-button"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Send Recommendation'}
+            </button>
+
+            {status === 'success' && (
+              <p className="form-message success">Thanks! I'll check it out 🎵</p>
+            )}
+            {status === 'error' && (
+              <p className="form-message error">Oops! Something went wrong. Try again?</p>
+            )}
+          </form>
+        </div>
+
         <div className="card">
-          <h3>� GitHub</h3>
+          <h3>GitHub</h3>
           <p style={{color: '#1db954', cursor: 'pointer'}} onClick={() => window.open('https://github.com/lewistough04', '_blank')}>
             github.com/lewistough04
           </p>
         </div>
         <div className="card">
-          <h3>💼 LinkedIn</h3>
+          <h3>LinkedIn</h3>
           <p>Connect with me on LinkedIn to discuss opportunities and collaborations.</p>
         </div>
         <div className="card">
-          <h3>📧 Email</h3>
-          <p>Feel free to reach out for project inquiries or collaboration opportunities.</p>
-        </div>
-        <div className="card">
-          <h3>🏫 Education</h3>
+          <h3>Education</h3>
           <p>Glasgow University Tech Society Member - Active participant in hackathons and coding challenges.</p>
         </div>
       </div>

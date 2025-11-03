@@ -147,7 +147,41 @@ When Vercel builds, the frontend uses `VITE_SPOTIFY_CLIENT_ID` and the serverles
 - The frontend POSTs the `code` to `/api/spotify-token` (serverless function) which exchanges it for an access token using the client secret (kept server-side).
 - The frontend uses the access token to fetch currently playing track. Album image fetches are proxied through `/api/proxy-image` to avoid CORS restrictions; the API returns a base64 image which the frontend paints to canvas and extracts an average colour.
 
+## Recommendation Feature Setup
+
+Users can recommend music or movies through a form on the Contact page. To receive these recommendations, you need to set up an email or SMS service:
+
+### Option 1: Email via Resend (Recommended - Free tier available)
+
+1. Sign up at https://resend.com
+2. Get your API key from the dashboard
+3. Add environment variables to Vercel:
+   - `RESEND_API_KEY` = your Resend API key
+   - `YOUR_EMAIL` = your email address (where you want to receive recommendations)
+   - `FROM_EMAIL` = verified sender email (e.g., recommendations@lewistough.co.uk)
+
+### Option 2: Email via SendGrid
+
+1. Sign up at https://sendgrid.com
+2. Get your API key
+3. Add environment variables to Vercel:
+   - `SENDGRID_API_KEY` = your SendGrid API key
+   - `YOUR_EMAIL` = your email address
+   - `FROM_EMAIL` = verified sender email
+
+### Option 3: SMS via Twilio
+
+1. Sign up at https://twilio.com
+2. Get your Account SID, Auth Token, and Twilio phone number
+3. Add environment variables to Vercel:
+   - `TWILIO_ACCOUNT_SID` = your Twilio Account SID
+   - `TWILIO_AUTH_TOKEN` = your Twilio Auth Token
+   - `TWILIO_PHONE_NUMBER` = your Twilio phone number
+   - `YOUR_PHONE_NUMBER` = your phone number (where you want to receive SMS)
+
+**Note:** Without any of these services configured, recommendations will be logged to the console (viewable in Vercel function logs).
+
 ## Notes & next steps
 
 - This is a minimal example. For production hardening: store refresh tokens server-side or in a secure database, handle token rotation gracefully, and rate-limit the proxy endpoints.
-- If you prefer to avoid a server entirely, you can implement PKCE and exchange tokens client-side — but note that some Spotify endpoints or browsers might restrict direct token exchange due to CORS.# vibewebsite
+- If you prefer to avoid a server entirely, you can implement PKCE and exchange tokens client-side — but note that some Spotify endpoints or browsers might restrict direct token exchange due to CORS.

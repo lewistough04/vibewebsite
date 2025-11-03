@@ -54,6 +54,30 @@ app.post('/proxy-image', async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'server_error' }) }
 })
 
+app.post('/recommend', async (req, res) => {
+  try {
+    const { name, type, recommendation, message } = req.body
+    
+    if (!recommendation) {
+      return res.status(400).json({ error: 'Recommendation is required' })
+    }
+
+    // Log the recommendation for local development
+    console.log('\n🎵 NEW RECOMMENDATION RECEIVED:')
+    console.log('Type:', type === 'music' ? 'Music' : 'Movie')
+    console.log('From:', name || 'Anonymous')
+    console.log('Recommendation:', recommendation)
+    if (message) console.log('Message:', message)
+    console.log('---\n')
+
+    // In production, this will use the email/SMS service configured in Vercel
+    res.json({ success: true })
+  } catch (err) { 
+    console.error(err); 
+    res.status(500).json({ error: 'server_error' }) 
+  }
+})
+
 // Local now-playing route: uses SPOTIFY_REFRESH_TOKEN from .env to fetch the owner's
 // currently playing track. Set SPOTIFY_REFRESH_TOKEN in your local .env after running
 // the one-time auth flow to produce a refresh token.
