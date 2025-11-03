@@ -148,8 +148,8 @@ function HomeSection() {
             This portfolio syncs with my Spotify in real-time to show what I'm currently listening to - 
             and you can listen along too! The background colors adapt to match the album artwork.
           </p>
-          <p style={{marginTop: '12px', fontStyle: 'italic', color: '#1db954'}}>
-            ✨ This website was vibecoded for a bit of fun - built while jamming to good music! 🎵
+          <p style={{marginTop: '12px', fontSize: '14px', color: '#b3b3b3'}}>
+            Built with music in mind 🎵
           </p>
         </div>
         <div className="card">
