@@ -34,6 +34,18 @@ function App() {
     return () => { mounted = false; clearInterval(iv) }
   }, [])
 
+  // Handle Escape key to close fullscreen
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false)
+      }
+    }
+    
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isFullscreen])
+
   return (
     <div className="app">
       {/* Sidebar Navigation */}
