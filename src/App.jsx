@@ -5,6 +5,7 @@ function App() {
   const [track, setTrack] = useState(null)
   const [bgColor, setBgColor] = useState('#1a1a1a')
   const [activeSection, setActiveSection] = useState('home')
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -107,6 +108,9 @@ function App() {
               alt={track.item.name}
               className="album-art-large"
               crossOrigin="anonymous"
+              onClick={() => setIsFullscreen(true)}
+              style={{cursor: 'pointer'}}
+              title="Click to expand"
             />
             <div className="track-info">
               <div className="track-label">
@@ -115,7 +119,9 @@ function App() {
                   {track.is_playing ? 'NOW PLAYING' : (track.played_at ? `LAST PLAYED • ${getTimeAgo(track.played_at).toUpperCase()}` : 'LAST PLAYED')}
                 </div>
               </div>
-              <h1 className="track-title">{track.item.name}</h1>
+              <h1 className="track-title" onClick={() => setIsFullscreen(true)} style={{cursor: 'pointer'}}>
+                {track.item.name}
+              </h1>
               <p className="track-artist">
                 {track.item.artists.map(a => a.name).join(', ')}
               </p>
@@ -154,6 +160,65 @@ function App() {
         {activeSection === 'skills' && <SkillsSection />}
         {activeSection === 'contact' && <ContactSection />}
       </main>
+
+      {/* Fullscreen Album View */}
+      {isFullscreen && track && (
+        <div className="fullscreen-overlay" onClick={() => setIsFullscreen(false)}>
+          <button 
+            className="fullscreen-close"
+            onClick={() => setIsFullscreen(false)}
+            aria-label="Close fullscreen"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+          <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
+            <div className="fullscreen-background" style={{background: `linear-gradient(180deg, ${bgColor} 0%, rgba(0,0,0,0.95) 100%)`}}></div>
+            <div className="fullscreen-inner">
+              <img 
+                src={track.item.album.images[0]?.url} 
+                alt={track.item.name}
+                className="fullscreen-album-art"
+                crossOrigin="anonymous"
+              />
+              <div className="fullscreen-details">
+                <div className="fullscreen-status">
+                  {track.is_playing && <span className="pulse"></span>}
+                  <span>{track.is_playing ? 'NOW PLAYING' : (track.played_at ? `LAST PLAYED • ${getTimeAgo(track.played_at).toUpperCase()}` : 'LAST PLAYED')}</span>
+                </div>
+                <h1 className="fullscreen-title">{track.item.name}</h1>
+                <p className="fullscreen-artist">
+                  {track.item.artists.map(a => a.name).join(', ')}
+                </p>
+                <p className="fullscreen-album">{track.item.album.name}</p>
+                <div className="fullscreen-meta">
+                  <span>{track.item.album.release_date?.split('-')[0]}</span>
+                  {track.item.duration_ms && (
+                    <>
+                      <span>•</span>
+                      <span>{Math.floor(track.item.duration_ms / 60000)}:{String(Math.floor((track.item.duration_ms % 60000) / 1000)).padStart(2, '0')}</span>
+                    </>
+                  )}
+                </div>
+                <div className="fullscreen-player">
+                  <iframe 
+                    style={{borderRadius: '12px'}}
+                    src={`https://open.spotify.com/embed/track/${track.item.id}?utm_source=generator&theme=0`}
+                    width="100%" 
+                    height="152" 
+                    frameBorder="0" 
+                    allowFullScreen="" 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy"
+                    title="Spotify Player"
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
