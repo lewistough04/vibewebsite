@@ -396,10 +396,27 @@ function ContactSection() {
     <div className="section">
       <h2 className="section-header">Get In Touch</h2>
       <div className="section-content">
+        <div className="card">
+          <h3>GitHub</h3>
+          <p style={{color: '#1db954', cursor: 'pointer'}} onClick={() => window.open('https://github.com/lewistough04', '_blank')}>
+            github.com/lewistough04
+          </p>
+        </div>
+        <div className="card">
+          <h3>LinkedIn</h3>
+          <p style={{color: '#1db954', cursor: 'pointer'}} onClick={() => window.open('https://www.linkedin.com/in/lewistough/', '_blank')}>
+            linkedin.com/in/lewistough
+          </p>
+        </div>
+        <div className="card">
+          <h3>Education</h3>
+          <p>Currently studying at the University of Glasgow, where I'm an active committee member of the Tech Society, participating in hackathons and coding challenges.</p>
+        </div>
+        
         <div className="card recommendation-form">
-          <h3>Recommend Music or Movies</h3>
+          <h3>Recommend Music or Films</h3>
           <p style={{marginBottom: '16px', color: '#b3b3b3'}}>
-            Got a song or movie I should check out? Let me know!
+            Got a tune or film I should check out? Let me know!
           </p>
           
           <form onSubmit={handleSubmit}>
@@ -421,14 +438,14 @@ function ContactSection() {
                 className="form-select"
               >
                 <option value="music">Music Recommendation</option>
-                <option value="movie">Movie Recommendation</option>
+                <option value="movie">Film Recommendation</option>
               </select>
             </div>
 
             <div className="form-group">
               <input
                 type="text"
-                placeholder={formData.type === 'music' ? 'Song name or artist' : 'Movie title'}
+                placeholder={formData.type === 'music' ? 'Song name or artist' : 'Film title'}
                 value={formData.recommendation}
                 onChange={(e) => setFormData({...formData, recommendation: e.target.value})}
                 className="form-input"
@@ -458,7 +475,7 @@ function ContactSection() {
             </button>
 
             {status === 'success' && (
-              <p className="form-message success">Thanks! I'll check it out 🎵</p>
+              <p className="form-message success">Cheers! I'll check it out 🎵</p>
             )}
             {status === 'error' && (
               <p className="form-message error">Oops! Something went wrong. Try again?</p>
@@ -467,21 +484,6 @@ function ContactSection() {
               <p className="form-message error">You've sent too many recommendations. Please try again in an hour.</p>
             )}
           </form>
-        </div>
-
-        <div className="card">
-          <h3>GitHub</h3>
-          <p style={{color: '#1db954', cursor: 'pointer'}} onClick={() => window.open('https://github.com/lewistough04', '_blank')}>
-            github.com/lewistough04
-          </p>
-        </div>
-        <div className="card">
-          <h3>LinkedIn</h3>
-          <p>Connect with me on LinkedIn to discuss opportunities and collaborations.</p>
-        </div>
-        <div className="card">
-          <h3>Education</h3>
-          <p>Glasgow University Tech Society Member - Active participant in hackathons and coding challenges.</p>
         </div>
       </div>
     </div>
