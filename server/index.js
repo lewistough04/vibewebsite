@@ -146,12 +146,18 @@ app.get('/now-playing', async (req, res) => {
     } else {
       nowData = await nowRes.json()
       console.log('Currently playing:', nowData.item?.name)
+      // Ensure is_playing is set correctly for currently playing tracks
+      if (nowData.is_playing === undefined) {
+        nowData.is_playing = true
+      }
     }
 
     if (!nowData || !nowData.item) {
       console.log('No track data to return')
       return res.status(204).end()
     }
+
+    console.log('Returning track data with is_playing:', nowData.is_playing, 'played_at:', nowData.played_at)
 
     let album_base64 = null
     try {

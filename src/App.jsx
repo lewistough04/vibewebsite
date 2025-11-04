@@ -112,7 +112,7 @@ function App() {
               <div className="track-label">
                 <div className="status-indicator">
                   {track.is_playing && <span className="pulse"></span>}
-                  {track.is_playing ? 'NOW PLAYING' : `LAST PLAYED • ${getTimeAgo(track.played_at).toUpperCase()}`}
+                  {track.is_playing ? 'NOW PLAYING' : (track.played_at ? `LAST PLAYED • ${getTimeAgo(track.played_at).toUpperCase()}` : 'LAST PLAYED')}
                 </div>
               </div>
               <h1 className="track-title">{track.item.name}</h1>
