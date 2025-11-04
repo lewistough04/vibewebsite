@@ -58,16 +58,39 @@ app.post('/recommend', async (req, res) => {
   try {
     const { name, type, recommendation, message } = req.body
     
-    if (!recommendation) {
-      return res.status(400).json({ error: 'Recommendation is required' })
+    // Input validation
+    if (!recommendation || typeof recommendation !== 'string') {
+      return res.status(400).json({ error: 'Valid recommendation is required' })
+    }
+
+    // Sanitize inputs
+    const sanitizedName = name && typeof name === 'string' 
+      ? name.trim().slice(0, 100).replace(/[<>]/g, '') 
+      : 'Anonymous'
+    
+    const validTypes = ['music', 'movie']
+    const sanitizedType = validTypes.includes(type) ? type : 'music'
+    
+    const sanitizedRecommendation = recommendation
+      .trim()
+      .slice(0, 200)
+      .replace(/[<>]/g, '')
+    
+    const sanitizedMessage = message && typeof message === 'string'
+      ? message.trim().slice(0, 500).replace(/[<>]/g, '')
+      : ''
+
+    if (sanitizedRecommendation.length < 2) {
+      return res.status(400).json({ error: 'Recommendation too short' })
     }
 
     // Log the recommendation for local development
     console.log('\n🎵 NEW RECOMMENDATION RECEIVED:')
-    console.log('Type:', type === 'music' ? 'Music' : 'Movie')
-    console.log('From:', name || 'Anonymous')
-    console.log('Recommendation:', recommendation)
-    if (message) console.log('Message:', message)
+    console.log('Type:', sanitizedType === 'music' ? 'Music' : 'Movie')
+    console.log('From:', sanitizedName)
+    console.log('Recommendation:', sanitizedRecommendation)
+    if (sanitizedMessage) console.log('Message:', sanitizedMessage)
+    console.log('Timestamp:', new Date().toISOString())
     console.log('---\n')
 
     // In production, this will use the email/SMS service configured in Vercel

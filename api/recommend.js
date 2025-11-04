@@ -1,5 +1,33 @@
 const fetch = (...args) => import('node-fetch').then(({default: f})=>f(...args))
 
+// Simple in-memory rate limiting (resets on cold starts)
+const rateLimitMap = new Map()
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
+const MAX_REQUESTS_PER_WINDOW = 5 // 5 requests per hour per IP
+
+function getRateLimitKey(req) {
+  // Use IP address or forwarded IP for rate limiting
+  return req.headers['x-forwarded-for']?.split(',')[0].trim() || 
+         req.headers['x-real-ip'] || 
+         'unknown'
+}
+
+function checkRateLimit(key) {
+  const now = Date.now()
+  const userRequests = rateLimitMap.get(key) || []
+  
+  // Remove old requests outside the time window
+  const recentRequests = userRequests.filter(time => now - time < RATE_LIMIT_WINDOW)
+  
+  if (recentRequests.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false // Rate limit exceeded
+  }
+  
+  recentRequests.push(now)
+  rateLimitMap.set(key, recentRequests)
+  return true
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -13,24 +41,61 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  // Rate limiting check
+  const rateLimitKey = getRateLimitKey(req)
+  if (!checkRateLimit(rateLimitKey)) {
+    return res.status(429).json({ 
+      error: 'Too many requests. Please try again later.' 
+    })
+  }
+
   try {
     const { name, type, recommendation, message } = req.body
 
-    if (!recommendation) {
-      return res.status(400).json({ error: 'Recommendation is required' })
+    // Input validation and sanitization
+    if (!recommendation || typeof recommendation !== 'string') {
+      return res.status(400).json({ error: 'Valid recommendation is required' })
     }
 
-    // Format the email content
-    const emailSubject = `New ${type === 'music' ? '🎵 Music' : '🎬 Movie'} Recommendation`
+    // Sanitize and validate inputs
+    const sanitizedName = name && typeof name === 'string' 
+      ? name.trim().slice(0, 100).replace(/[<>]/g, '') 
+      : 'Anonymous'
+    
+    const validTypes = ['music', 'movie']
+    const sanitizedType = validTypes.includes(type) ? type : 'music'
+    
+    const sanitizedRecommendation = recommendation
+      .trim()
+      .slice(0, 200)
+      .replace(/[<>]/g, '')
+    
+    const sanitizedMessage = message && typeof message === 'string'
+      ? message.trim().slice(0, 500).replace(/[<>]/g, '')
+      : ''
+
+    // Length validation
+    if (sanitizedRecommendation.length < 2) {
+      return res.status(400).json({ error: 'Recommendation too short' })
+    }
+
+    // Rate limiting check (basic)
+    const userAgent = req.headers['user-agent'] || 'unknown'
+    const timestamp = Date.now()
+    
+    // Format the email content (sanitized inputs are used)
+    const emailSubject = `New ${sanitizedType === 'music' ? '🎵 Music' : '🎬 Movie'} Recommendation`
     const emailBody = `
 New Recommendation Received!
 
-Type: ${type === 'music' ? 'Music' : 'Movie'}
-From: ${name || 'Anonymous'}
-Recommendation: ${recommendation}
-${message ? `\nMessage: ${message}` : ''}
+Type: ${sanitizedType === 'music' ? 'Music' : 'Movie'}
+From: ${sanitizedName}
+Recommendation: ${sanitizedRecommendation}
+${sanitizedMessage ? `\nMessage: ${sanitizedMessage}` : ''}
 
 ---
+Timestamp: ${new Date(timestamp).toISOString()}
+User Agent: ${userAgent.slice(0, 100)}
 Sent from your portfolio website
     `.trim()
 

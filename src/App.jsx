@@ -352,16 +352,35 @@ function ContactSection() {
     setIsSubmitting(true)
     setStatus('')
 
+    // Client-side validation
+    if (!formData.recommendation || formData.recommendation.trim().length < 2) {
+      setStatus('error')
+      setIsSubmitting(false)
+      return
+    }
+
+    // Sanitize inputs client-side
+    const sanitizedData = {
+      name: formData.name.trim().slice(0, 100),
+      type: ['music', 'movie'].includes(formData.type) ? formData.type : 'music',
+      recommendation: formData.recommendation.trim().slice(0, 200),
+      message: formData.message.trim().slice(0, 500)
+    }
+
     try {
       const response = await fetch('/api/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(sanitizedData)
       })
+
+      const data = await response.json()
 
       if (response.ok) {
         setStatus('success')
         setFormData({ name: '', type: 'music', recommendation: '', message: '' })
+      } else if (response.status === 429) {
+        setStatus('ratelimit')
       } else {
         setStatus('error')
       }
@@ -391,6 +410,7 @@ function ContactSection() {
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 className="form-input"
+                maxLength={100}
               />
             </div>
 
@@ -412,6 +432,8 @@ function ContactSection() {
                 value={formData.recommendation}
                 onChange={(e) => setFormData({...formData, recommendation: e.target.value})}
                 className="form-input"
+                maxLength={200}
+                minLength={2}
                 required
               />
             </div>
@@ -422,6 +444,7 @@ function ContactSection() {
                 value={formData.message}
                 onChange={(e) => setFormData({...formData, message: e.target.value})}
                 className="form-textarea"
+                maxLength={500}
                 rows="3"
               />
             </div>
@@ -439,6 +462,9 @@ function ContactSection() {
             )}
             {status === 'error' && (
               <p className="form-message error">Oops! Something went wrong. Try again?</p>
+            )}
+            {status === 'ratelimit' && (
+              <p className="form-message error">You've sent too many recommendations. Please try again in an hour.</p>
             )}
           </form>
         </div>
