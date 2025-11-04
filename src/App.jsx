@@ -280,7 +280,7 @@ function AboutSection() {
           <h3>What I Do</h3>
           <p>
             I'm a software developer with a passion for building full-stack web applications and solving complex problems.
-            I specialize in creating interactive, user-friendly solutions using modern technologies like React, Django, and various APIs.
+            I specialise in creating interactive, user-friendly solutions using modern technologies like React, Django, and various APIs.
           </p>
         </div>
         <div className="card">
