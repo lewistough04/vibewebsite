@@ -6,6 +6,9 @@ function App() {
   const [bgColor, setBgColor] = useState('#1a1a1a')
   const [activeSection, setActiveSection] = useState('home')
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [gameActive, setGameActive] = useState(false)
+  const [enemies, setEnemies] = useState([])
+  const [score, setScore] = useState(0)
 
   useEffect(() => {
     let mounted = true
@@ -45,6 +48,76 @@ function App() {
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
   }, [isFullscreen])
+
+  // Easter egg: type "vibe" to activate game
+  useEffect(() => {
+    let keys = []
+    const secretCode = ['v', 'i', 'b', 'e']
+    
+    const handleKeyPress = (e) => {
+      if (gameActive) return
+      keys.push(e.key.toLowerCase())
+      keys = keys.slice(-secretCode.length)
+      
+      if (keys.join('') === secretCode.join('')) {
+        setGameActive(true)
+        keys = []
+      }
+    }
+    
+    window.addEventListener('keypress', handleKeyPress)
+    return () => window.removeEventListener('keypress', handleKeyPress)
+  }, [gameActive])
+
+  // Game logic
+  useEffect(() => {
+    if (!gameActive) return
+
+    const spawnInterval = setInterval(() => {
+      const newEnemy = {
+        id: Date.now() + Math.random(),
+        x: Math.random() * (window.innerWidth - 50),
+        y: Math.random() * (window.innerHeight - 50),
+        health: 3,
+        targetX: Math.random() * window.innerWidth,
+        targetY: Math.random() * window.innerHeight
+      }
+      setEnemies(prev => [...prev, newEnemy])
+    }, 2000)
+
+    const moveInterval = setInterval(() => {
+      setEnemies(prev => prev.map(enemy => ({
+        ...enemy,
+        x: enemy.x + (enemy.targetX - enemy.x) * 0.02,
+        y: enemy.y + (enemy.targetY - enemy.y) * 0.02
+      })))
+    }, 50)
+
+    return () => {
+      clearInterval(spawnInterval)
+      clearInterval(moveInterval)
+    }
+  }, [gameActive])
+
+  const handleEnemyClick = (enemyId) => {
+    setEnemies(prev => {
+      const enemy = prev.find(e => e.id === enemyId)
+      if (!enemy) return prev
+      
+      if (enemy.health <= 1) {
+        setScore(s => s + 1)
+        return prev.filter(e => e.id !== enemyId)
+      } else {
+        return prev.map(e => e.id === enemyId ? {...e, health: e.health - 1} : e)
+      }
+    })
+  }
+
+  const endGame = () => {
+    setGameActive(false)
+    setEnemies([])
+    setScore(0)
+  }
 
   return (
     <div className="app">
@@ -229,6 +302,35 @@ function App() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Mini Game Overlay */}
+      {gameActive && (
+        <div className="game-overlay">
+          <div className="game-hud">
+            <div className="game-score">Score: {score}</div>
+            <button className="game-quit" onClick={endGame}>
+              Quit Game
+            </button>
+          </div>
+          {enemies.map(enemy => (
+            <div
+              key={enemy.id}
+              className="game-enemy"
+              style={{
+                left: `${enemy.x}px`,
+                top: `${enemy.y}px`,
+                transform: `scale(${enemy.health / 3})`
+              }}
+              onClick={() => handleEnemyClick(enemy.id)}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              <span className="enemy-health">{enemy.health}</span>
+            </div>
+          ))}
         </div>
       )}
     </div>
