@@ -73,24 +73,91 @@ function App() {
   useEffect(() => {
     if (!gameActive) return
 
+    // Get all content elements that can be eaten
+    const getTargetElements = () => {
+      const selectors = [
+        '.card', '.project-card', '.skill-badge', '.contact-card',
+        '.nav-link', '.track-info h1', '.track-info p',
+        '.section-header', 'p', 'h2', 'h3', 'li'
+      ]
+      const elements = []
+      selectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          if (!el.classList.contains('game-eaten') && el.offsetParent !== null) {
+            elements.push(el)
+          }
+        })
+      })
+      return elements
+    }
+
     const spawnInterval = setInterval(() => {
+      const targets = getTargetElements()
+      if (targets.length === 0) return
+
+      const targetElement = targets[Math.floor(Math.random() * targets.length)]
+      const rect = targetElement.getBoundingClientRect()
+      
       const newEnemy = {
         id: Date.now() + Math.random(),
         x: Math.random() * (window.innerWidth - 50),
         y: Math.random() * (window.innerHeight - 50),
         health: 3,
-        targetX: Math.random() * window.innerWidth,
-        targetY: Math.random() * window.innerHeight
+        targetElement: targetElement,
+        targetX: rect.left + rect.width / 2,
+        targetY: rect.top + rect.height / 2,
+        isEating: false
       }
       setEnemies(prev => [...prev, newEnemy])
     }, 2000)
 
     const moveInterval = setInterval(() => {
-      setEnemies(prev => prev.map(enemy => ({
-        ...enemy,
-        x: enemy.x + (enemy.targetX - enemy.x) * 0.02,
-        y: enemy.y + (enemy.targetY - enemy.y) * 0.02
-      })))
+      setEnemies(prev => prev.map(enemy => {
+        if (!enemy.targetElement || enemy.isEating) return enemy
+
+        const rect = enemy.targetElement.getBoundingClientRect()
+        const targetX = rect.left + rect.width / 2
+        const targetY = rect.top + rect.height / 2
+        
+        const newX = enemy.x + (targetX - enemy.x) * 0.03
+        const newY = enemy.y + (targetY - enemy.y) * 0.03
+        
+        // Check if enemy reached the target
+        const distance = Math.sqrt(Math.pow(targetX - newX, 2) + Math.pow(targetY - newY, 2))
+        
+        if (distance < 30 && !enemy.isEating) {
+          // Start eating animation
+          enemy.targetElement.classList.add('being-eaten')
+          setTimeout(() => {
+            if (enemy.targetElement) {
+              enemy.targetElement.classList.add('game-eaten')
+              enemy.targetElement.style.display = 'none'
+            }
+          }, 500)
+          
+          // Find new target
+          const targets = getTargetElements()
+          const newTarget = targets[Math.floor(Math.random() * targets.length)]
+          if (newTarget) {
+            const newRect = newTarget.getBoundingClientRect()
+            return {
+              ...enemy,
+              targetElement: newTarget,
+              targetX: newRect.left + newRect.width / 2,
+              targetY: newRect.top + newRect.height / 2,
+              isEating: false
+            }
+          }
+        }
+
+        return {
+          ...enemy,
+          x: newX,
+          y: newY,
+          targetX,
+          targetY
+        }
+      }))
     }, 50)
 
     return () => {
@@ -117,6 +184,12 @@ function App() {
     setGameActive(false)
     setEnemies([])
     setScore(0)
+    
+    // Restore all eaten elements
+    document.querySelectorAll('.game-eaten').forEach(el => {
+      el.classList.remove('game-eaten', 'being-eaten')
+      el.style.display = ''
+    })
   }
 
   return (
