@@ -119,17 +119,12 @@ html, body, #root {
 /* Main Content Area */
 .main-content {
   flex: 1;
-  background: linear-gradient(180deg, 
-    var(--gradient-top, var(--spotify-dark)) 0%, 
-    var(--spotify-black) 25%, 
-    var(--spotify-black) 75%, 
-    var(--gradient-bottom, var(--spotify-dark)) 100%);
+  background: var(--spotify-dark);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 24px 32px;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  transition: background 0.8s ease;
 }
 
 /* Now Playing Hero Section */

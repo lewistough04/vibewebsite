@@ -4,7 +4,6 @@ import { getNowPlaying } from './spotify'
 function App() {
   const [track, setTrack] = useState(null)
   const [bgColor, setBgColor] = useState('#1a1a1a')
-  const [gradientColors, setGradientColors] = useState({ top: '#1a1a1a', bottom: '#1a1a1a' })
   const [activeSection, setActiveSection] = useState('home')
   const [isFullscreen, setIsFullscreen] = useState(false)
 
@@ -21,8 +20,6 @@ function App() {
           if (base64) {
             const color = await getAverageColorFromBase64(base64)
             setBgColor(color)
-            const colors = await getGradientColorsFromBase64(base64)
-            setGradientColors(colors)
           }
         } else {
           console.log('No track data received')
@@ -114,7 +111,7 @@ function App() {
       </aside>
 
       {/* Main Content */}
-      <main className="main-content" style={{'--gradient-top': gradientColors.top, '--gradient-bottom': gradientColors.bottom}}>
+      <main className="main-content">
         {/* Now Playing Hero Section */}
         {track ? (
           <div className="now-playing-hero" style={{'--bg-color': bgColor}}>
@@ -592,53 +589,6 @@ async function getAverageColorFromBase64(base64) {
       resolve(`rgb(${r}, ${g}, ${b})`)
     }
     img.onerror = () => resolve('#1a1a1a')
-    img.src = base64
-  })
-}
-
-async function getGradientColorsFromBase64(base64) {
-  return new Promise((resolve) => {
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const w = 100, h = 100
-      canvas.width = w; canvas.height = h
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(img, 0, 0, w, h)
-      
-      // Get colors from top third and bottom third of the image
-      const topData = ctx.getImageData(0, 0, w, Math.floor(h/3)).data
-      const bottomData = ctx.getImageData(0, Math.floor(2*h/3), w, Math.floor(h/3)).data
-      
-      // Calculate average color for top
-      let r1=0, g1=0, b1=0, count1=0
-      for (let i=0; i<topData.length; i+=4) {
-        const alpha = topData[i+3]
-        if (alpha > 0) {
-          r1 += topData[i]; g1 += topData[i+1]; b1 += topData[i+2]; count1++
-        }
-      }
-      
-      // Calculate average color for bottom
-      let r2=0, g2=0, b2=0, count2=0
-      for (let i=0; i<bottomData.length; i+=4) {
-        const alpha = bottomData[i+3]
-        if (alpha > 0) {
-          r2 += bottomData[i]; g2 += bottomData[i+1]; b2 += bottomData[i+2]; count2++
-        }
-      }
-      
-      const defaultColor = '#1a1a1a'
-      const topColor = count1 > 0 
-        ? `rgb(${Math.round(r1/count1)}, ${Math.round(g1/count1)}, ${Math.round(b1/count1)})`
-        : defaultColor
-      const bottomColor = count2 > 0 
-        ? `rgb(${Math.round(r2/count2)}, ${Math.round(g2/count2)}, ${Math.round(b2/count2)})`
-        : defaultColor
-      
-      resolve({ top: topColor, bottom: bottomColor })
-    }
-    img.onerror = () => resolve({ top: '#1a1a1a', bottom: '#1a1a1a' })
     img.src = base64
   })
 }
