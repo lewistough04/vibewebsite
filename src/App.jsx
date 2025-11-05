@@ -9,6 +9,7 @@ function App() {
   const [gameActive, setGameActive] = useState(false)
   const [enemies, setEnemies] = useState([])
   const [score, setScore] = useState(0)
+  const [gameOver, setGameOver] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -132,6 +133,12 @@ function App() {
             if (enemy.targetElement) {
               enemy.targetElement.classList.add('game-eaten')
               enemy.targetElement.style.display = 'none'
+              
+              // Check if all content is eaten
+              const remainingTargets = getTargetElements()
+              if (remainingTargets.length === 0) {
+                setTimeout(() => setGameOver(true), 1000)
+              }
             }
           }, 500)
           
@@ -182,6 +189,7 @@ function App() {
 
   const endGame = () => {
     setGameActive(false)
+    setGameOver(false)
     setEnemies([])
     setScore(0)
     
@@ -404,6 +412,29 @@ function App() {
               <span className="enemy-health">{enemy.health}</span>
             </div>
           ))}
+          
+          {/* Game Over Screen */}
+          {gameOver && (
+            <div className="game-over-screen">
+              <div className="game-over-content">
+                <h1 className="game-over-title">GAME OVER</h1>
+                <p className="game-over-message">The vibes have consumed everything!</p>
+                <div className="game-over-stats">
+                  <div className="stat">
+                    <span className="stat-label">Enemies Defeated</span>
+                    <span className="stat-value">{score}</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-label">Final Score</span>
+                    <span className="stat-value">{score * 100}</span>
+                  </div>
+                </div>
+                <button className="game-restart" onClick={endGame}>
+                  Restart Portfolio
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
