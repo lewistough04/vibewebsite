@@ -680,12 +680,6 @@ function QuizSection() {
       correct: 1,
       explanation: "Typing 'vibe' activates a hidden mini game where enemies try to eat the content!"
     },
-    {
-      question: "Which project involved real-time combat?",
-      options: ["Automated Trading Bot", "Django Blog", "Terminal-Based RPG", "Weather Dashboard"],
-      correct: 2,
-      explanation: "The Terminal-Based RPG featured real-time turn-based combat with multiple character classes!"
-    }
   ]
 
   const handleAnswerClick = (selectedIndex) => {
