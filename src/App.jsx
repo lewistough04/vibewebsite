@@ -260,6 +260,15 @@ function App() {
               </svg>
               <span>Contact</span>
             </li>
+            <li 
+              className={`nav-link ${activeSection === 'quiz' ? 'active' : ''}`}
+              onClick={() => setActiveSection('quiz')}
+            >
+              <svg className="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+              </svg>
+              <span>Quiz</span>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -325,6 +334,7 @@ function App() {
         {activeSection === 'projects' && <ProjectsSection />}
         {activeSection === 'skills' && <SkillsSection />}
         {activeSection === 'contact' && <ContactSection />}
+        {activeSection === 'quiz' && <QuizSection />}
       </main>
 
       {/* Fullscreen Album View */}
@@ -615,6 +625,208 @@ function SkillsSection() {
             <p>Received an honourable mention for innovative project in competitive tech environment. Built strong collaboration and communication skills.</p>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function QuizSection() {
+  const [currentQuestion, setCurrentQuestion] = React.useState(0)
+  const [score, setScore] = React.useState(0)
+  const [showScore, setShowScore] = React.useState(false)
+  const [selectedAnswer, setSelectedAnswer] = React.useState(null)
+  const [answeredQuestions, setAnsweredQuestions] = React.useState([])
+
+  const questions = [
+    {
+      question: "What university does Lewis currently attend?",
+      options: ["University of Edinburgh", "University of Glasgow", "University of Strathclyde", "Glasgow Caledonian"],
+      correct: 1,
+      explanation: "Lewis is currently studying at the University of Glasgow!"
+    },
+    {
+      question: "Which Tech Society role does Lewis hold?",
+      options: ["President", "Treasurer", "Committee Member", "Secretary"],
+      correct: 2,
+      explanation: "Lewis is an active committee member of the Glasgow University Tech Society!"
+    },
+    {
+      question: "How many projects are showcased on this portfolio?",
+      options: ["5 projects", "6 projects", "8 projects", "10 projects"],
+      correct: 2,
+      explanation: "Lewis has showcased 8 different projects spanning web dev, game dev, and systems programming!"
+    },
+    {
+      question: "What framework is this website built with?",
+      options: ["Next.js", "React with Vite", "Angular", "Vue.js"],
+      correct: 1,
+      explanation: "This portfolio is built with React and Vite for fast performance!"
+    },
+    {
+      question: "What special feature does this portfolio have?",
+      options: ["Weather integration", "Spotify integration", "Twitter feed", "Instagram gallery"],
+      correct: 1,
+      explanation: "The portfolio integrates with Spotify to show what Lewis is currently listening to and adapts colors to the album art!"
+    },
+    {
+      question: "What programming languages does Lewis know?",
+      options: ["Only Python", "Python, JavaScript, Java, C++", "Only JavaScript", "Ruby and PHP"],
+      correct: 1,
+      explanation: "Lewis is proficient in Python, JavaScript, Java, C++, and more!"
+    },
+    {
+      question: "What happens when you type 'vibe' on this website?",
+      options: ["Nothing happens", "A hidden game activates", "Music plays", "Page changes color"],
+      correct: 1,
+      explanation: "Typing 'vibe' activates a hidden mini game where enemies try to eat the content!"
+    },
+    {
+      question: "Which project involved real-time combat?",
+      options: ["Automated Trading Bot", "Django Blog", "Terminal-Based RPG", "Weather Dashboard"],
+      correct: 2,
+      explanation: "The Terminal-Based RPG featured real-time turn-based combat with multiple character classes!"
+    }
+  ]
+
+  const handleAnswerClick = (selectedIndex) => {
+    if (selectedAnswer !== null) return // Already answered
+
+    setSelectedAnswer(selectedIndex)
+    const isCorrect = selectedIndex === questions[currentQuestion].correct
+    
+    setAnsweredQuestions(prev => [...prev, {
+      question: currentQuestion,
+      correct: isCorrect
+    }])
+
+    if (isCorrect) {
+      setScore(score + 1)
+    }
+
+    // Move to next question after delay
+    setTimeout(() => {
+      const nextQuestion = currentQuestion + 1
+      if (nextQuestion < questions.length) {
+        setCurrentQuestion(nextQuestion)
+        setSelectedAnswer(null)
+      } else {
+        setShowScore(true)
+      }
+    }, 2000)
+  }
+
+  const restartQuiz = () => {
+    setCurrentQuestion(0)
+    setScore(0)
+    setShowScore(false)
+    setSelectedAnswer(null)
+    setAnsweredQuestions([])
+  }
+
+  const getScoreMessage = () => {
+    const percentage = (score / questions.length) * 100
+    if (percentage === 100) return "Perfect! You know everything about me! 🎉"
+    if (percentage >= 75) return "Excellent! You've been paying attention! 🌟"
+    if (percentage >= 50) return "Good job! You know quite a bit! 👍"
+    if (percentage >= 25) return "Not bad! Browse around more to learn more! 😊"
+    return "Give it another try! Explore the site more! 💪"
+  }
+
+  return (
+    <div className="section">
+      <h2 className="section-header">Test Your Knowledge</h2>
+      <div className="quiz-container">
+        {!showScore ? (
+          <div className="quiz-content">
+            <div className="quiz-progress">
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill" 
+                  style={{width: `${((currentQuestion + 1) / questions.length) * 100}%`}}
+                ></div>
+              </div>
+              <span className="progress-text">
+                Question {currentQuestion + 1} of {questions.length}
+              </span>
+            </div>
+
+            <div className="quiz-question">
+              <h3>{questions[currentQuestion].question}</h3>
+            </div>
+
+            <div className="quiz-options">
+              {questions[currentQuestion].options.map((option, index) => {
+                const isCorrect = index === questions[currentQuestion].correct
+                const isSelected = selectedAnswer === index
+                let className = 'quiz-option'
+                
+                if (selectedAnswer !== null) {
+                  if (isSelected && isCorrect) className += ' correct'
+                  else if (isSelected && !isCorrect) className += ' incorrect'
+                  else if (isCorrect) className += ' correct'
+                  else className += ' disabled'
+                }
+
+                return (
+                  <button
+                    key={index}
+                    className={className}
+                    onClick={() => handleAnswerClick(index)}
+                    disabled={selectedAnswer !== null}
+                  >
+                    {option}
+                    {selectedAnswer !== null && isCorrect && (
+                      <svg className="option-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      </svg>
+                    )}
+                    {selectedAnswer !== null && isSelected && !isCorrect && (
+                      <svg className="option-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                      </svg>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            {selectedAnswer !== null && (
+              <div className="quiz-explanation">
+                <p>{questions[currentQuestion].explanation}</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="quiz-results">
+            <div className="results-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <h3 className="results-title">Quiz Complete!</h3>
+            <div className="results-score">
+              <span className="score-number">{score}</span>
+              <span className="score-total">/ {questions.length}</span>
+            </div>
+            <p className="results-message">{getScoreMessage()}</p>
+            <div className="results-breakdown">
+              {questions.map((q, index) => {
+                const answered = answeredQuestions.find(a => a.question === index)
+                return (
+                  <div key={index} className={`breakdown-item ${answered?.correct ? 'correct' : 'incorrect'}`}>
+                    <span className="breakdown-icon">
+                      {answered?.correct ? '✓' : '✗'}
+                    </span>
+                    <span className="breakdown-text">Question {index + 1}</span>
+                  </div>
+                )
+              })}
+            </div>
+            <button className="quiz-restart" onClick={restartQuiz}>
+              Take Quiz Again
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
